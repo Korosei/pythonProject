@@ -1,4 +1,3 @@
 import engine
 
-engine.set_name("Korosei")
-engine.monster_battle()
+greeting = "Welcome to the world of Battle Monsters!"

@@ -1,20 +1,22 @@
 import random as rd
 
+
 def heal(char_name, monster_name):  # Heals current monster to full hp
-    print(f"{char_name} heals ")
-    pass
+    return f"{char_name} heals {monster_name} to max hp."
 
 
-def boost(self, monster):  # Raise one monsters' attack and defense by 30 points for 2 turns
-    pass
+def boost(char_name, monster_name):  # Raise one monsters' attack and defense by 20 points for 2 turns
+    b_str = f"{char_name} raises {monster_name} attack and defense by 20 points for the next 2 turns."
+    return 20, b_str
 
 
-def dagger_throw(self, enemy_name):  # Inflict 25 points of damage to the enemy
-    pass
+def dagger_throw(char_name, enemy_name):  # Inflict 25 points of damage to the enemy
+    dt_str = f"{char_name} throws a dagger at {enemy_name} and inflicts 25 points of damage!"
+    return 25, dt_str
 
 
-def flash_bomb(self):  # Blinds the enemy causing their turn to be skipped
-    pass
+def flash_bomb(char_name, enemey_name):  # Blinds the enemy causing their turn to be skipped
+    return f"{char_name} throws a flash bomb at the enemy! {enemey_name} is blinded and cannot attack for one turn."
 
 
 def claw_swipe(*args, enemy_name):  # Ghost swipes his claws at the enemy inflicting damage equal to 20 damage
@@ -29,11 +31,11 @@ def meow_barrage(*args, enemy_name):  # Ghost meows at the enemy 5-10 times deal
     return total_damage, meow_str
 
 
-def flame_ball(self, monster, enemy_name):  # Shoots a ball of fire at the enemy dealing 15 damage
+def flame_ball(monster, enemy_name):  # Shoots a ball of fire at the enemy dealing 15 damage
     pass
 
 
-def radiant_light(self, monster, enemy_name):  # Blinds the enemy, dealing 15 damage and causing their turn to be skipped
+def radiant_light(monster, enemy_name):  # Blinds the enemy, dealing 15 damage and causing their turn to be skipped
     pass
 
 
