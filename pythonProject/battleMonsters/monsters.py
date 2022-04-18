@@ -13,57 +13,71 @@ class BaseMonster:
     def_defense = 5
 
     def __init__(self):
-        self.curr_hp = self.def_hp  # current hit points
-        self.curr_mp = self.def_mp
-        self.curr_atk = self.def_atk
-        self.curr_defense = self.def_defense
+        self.hp = self.def_hp  # current hit points
+        self.mp = self.def_mp
+        self.atk = self.def_atk
+        self.defense = self.def_defense
 
-    def hit(self, enemy_name):
-        attack_damage, hit_str = sk.hit(self.name, self.curr_atk, enemy_name)
+    def hit(self, enemy):
+        attack_damage, hit_str = sk.hit(self, enemy)
         return attack_damage, hit_str
 
     def guard(self, *args):
-        damage_dealt, guard_str = sk.guard(monster_name=self.name, monster_defense=self.curr_defense)
+        damage_dealt, guard_str = sk.guard(monster=self)
         return damage_dealt, guard_str
 
-    def skill_one(self, enemy_name):
-        attack_damage, hit_str = sk.hit(self.name, self.curr_atk, enemy_name)
-        return attack_damage, hit_str
-
-    def skill_two(self, enemy_name):
-        attack_damage, hit_str = sk.hit(self.name, self.curr_atk, enemy_name)
-        return attack_damage, hit_str
-
-    def increase_stats(self, diff_modifier):
-        self.curr_hp += diff_modifier*10
-        self.curr_atk += diff_modifier*3
-        self.curr_defense += diff_modifier
-
-    def decrease_stats(self, diff_modifier):
-        self.curr_hp = self.def_hp
-        self.curr_atk = self.def_atk
-        self.curr_defense = self.def_defense
+    def reset_stats(self):
+        self.hp = self.def_hp
+        self.mp = self.def_mp
+        self.atk = self.def_atk
+        self.defense = self.def_defense
 
     def __str__(self):
-        return f"Name: {self.name}\nHP: {self.curr_hp}\nMP: {self.curr_mp}\nAttack: {self.curr_atk}\nDefense: " \
-               f"{self.curr_defense}\n "
+        return f"Name: {self.name}\nHP: {self.hp}\nMP: {self.mp}\nAttack: {self.atk}\nDefense: " \
+               f"{self.defense}\n"
 
 
 class RandomMonster(BaseMonster):
     def __init__(self):
-        while rd.choice(random_name) in used_names:
-            pass
-        else:
-            self.name = rd.choice(random_name)
-            used_names.add(self.name)
+        """The following 6 lines of code removes random monsters with the same name to appear one after another.
+           This is just a design choice and has no actual effect on the game."""
+        rd_index = rd.randint(0, len(random_name)-1)
+        self.name = random_name[rd_index]
+        used_names.add(random_name.pop(rd_index))
+
+        if len(random_name) == 0:
+            for num in range(len(used_names)):
+                random_name.append(used_names.pop())
+
         self.def_hp = rd.randint(80, 120)
-        self.curr_hp = self.def_hp
+        self.hp = self.def_hp
         self.def_mp = 20
-        self.curr_mp = self.def_mp
+        self.mp = self.def_mp
         self.def_atk = rd.randint(10, 15)
-        self.curr_atk = self.def_atk
-        self.curr_defense = rd.randint(4, 8)
-        self.def_defense = self.curr_defense
+        self.atk = self.def_atk
+        self.def_defense = rd.randint(4, 8)
+        self.defense = self.def_defense
+        self.one_name, self.sk_one = sk.rd_skill(1)
+        self.two_name, self.sk_two = sk.rd_skill(2)
+
+    def increase_stats(self, diff_modifier):
+        self.hp += diff_modifier * 10
+        self.mp += diff_modifier * 5
+        self.atk += diff_modifier * 3
+        self.defense += diff_modifier
+
+    def skill_one(self, enemy):
+        self.mp -= 5
+        damage_dealt, one_str = self.sk_one(monster=self, enemy=enemy)
+        return damage_dealt, one_str
+
+    def skill_two(self, enemy):
+        self.mp -= 15
+        damage_dealt, two_str = self.sk_two(monster=self, enemy=enemy)
+        return damage_dealt, two_str
+
+    def skills_list(self):
+        return ["Hit", "Guard", self.one_name, self.two_name]
 
 
 class Ghost(BaseMonster):
@@ -73,33 +87,19 @@ class Ghost(BaseMonster):
     def_atk = 15
     def_defense = 8
 
-    @staticmethod
-    def skill_one(enemy_name):
-        damage_dealt, claw_str = sk.claw_swipe(enemy_name=enemy_name)
+    def skill_one(self, enemy):
+        self.mp -= 5
+        damage_dealt, claw_str = sk.claw_swipe(enemy=enemy)
         return damage_dealt, claw_str
 
-    @staticmethod
-    def skill_two(enemy_name):
-        damage_dealt, meow_str = sk.meow_barrage(enemy_name=enemy_name)
+    def skill_two(self, enemy):
+        self.mp -= 15
+        damage_dealt, meow_str = sk.meow_barrage(enemy=enemy)
         return damage_dealt, meow_str
 
-
-class LightFire(BaseMonster):
-    name = "LightFire"
-    max_hp = 80
-    hp = 80
-    mp = 20
-    attack = 7
-    defense = 5
-
-
-def get_skills(name):
-    skills_list = {"Ghost": ["Hit", "Guard", "Claw Swipe", "Meow Barrage"]}
-
-    if name in skills_list:
-        return skills_list[name]
-    else:
-        return ["Hit", "Guard", "Skill_One", "Skill_two"]
+    @staticmethod
+    def skills_list(*args):
+        return ["Hit", "Guard", "Claw Swipe", "Meow Barrage"]
 
 
 
